@@ -77,11 +77,24 @@ def setup_otel() -> None:
 
 
 def _configure_logging() -> None:
+    import logging
+    import sys
+    
+    handlers = [logging.StreamHandler(sys.stdout)]
+    log_dir = "/app/logs"
+    try:
+        os.makedirs(log_dir, exist_ok=True)
+        handlers.append(logging.FileHandler(os.path.join(log_dir, "app.log")))
+    except Exception:
+        pass
+        
     logging.basicConfig(
         format="%(message)s",
-        stream=sys.stdout,
+        handlers=handlers,
         level=os.getenv("LOG_LEVEL", "INFO"),
     )
+    
+    import structlog.stdlib
     structlog.configure(
         processors=[
             structlog.contextvars.merge_contextvars,
@@ -89,8 +102,8 @@ def _configure_logging() -> None:
             structlog.processors.TimeStamper(fmt="iso"),
             structlog.processors.JSONRenderer(),
         ],
-        wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
-        logger_factory=structlog.PrintLoggerFactory(),
+        wrapper_class=structlog.stdlib.BoundLogger,
+        logger_factory=structlog.stdlib.LoggerFactory(),
         cache_logger_on_first_use=True,
     )
 

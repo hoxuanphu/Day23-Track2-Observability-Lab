@@ -18,6 +18,10 @@ receivers:
           static_configs:
             - targets: ['localhost:8888']
 
+  filelog:
+    include: [ /app/logs/app.log ]
+    start_at: beginning
+
 processors:
   batch:
     send_batch_size: 1024
@@ -56,6 +60,9 @@ exporters:
   debug:
     verbosity: basic
 
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+
 service:
   pipelines:
     traces:
@@ -67,6 +74,11 @@ service:
       receivers: [otlp, prometheus]
       processors: [resource, batch]
       exporters: [debug]
+
+    logs:
+      receivers: [filelog]
+      processors: [resource, batch]
+      exporters: [loki]
 
   telemetry:
     logs:

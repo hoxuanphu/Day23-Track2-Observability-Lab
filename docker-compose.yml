@@ -24,6 +24,8 @@ services:
       timeout: 3s
       retries: 5
     networks: [obs]
+    volumes:
+      - ./logs:/app/logs
 
   prometheus:
     image: prom/prometheus:v2.55.0
@@ -108,6 +110,7 @@ services:
       - "127.0.0.1:8888:8888"  # collector self-metrics
     volumes:
       - ./03-tracing-and-logs/otel-collector/otel-config.yaml:/etc/otelcol-contrib/config.yaml:ro
+      - ./logs:/app/logs:ro
     command: ["--config=/etc/otelcol-contrib/config.yaml"]
     depends_on:
       - jaeger
