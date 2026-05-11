@@ -2,8 +2,8 @@
 
 > Fill in each section. Grader reads the "What I'd change" paragraph closest.
 
-**Student:** _your name_
-**Submission date:** _YYYY-MM-DD_
+**Student:** Hồ Xuân Phú
+**Submission date:** 2026-05-12
 **Lab repo URL:** _public GitHub URL_
 
 ---
